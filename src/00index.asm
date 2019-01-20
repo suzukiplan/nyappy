@@ -75,8 +75,12 @@ palettes:
 .org $0000
 v_counter:  .byte   $00     ; 00: フレームカウンタ
 v_nyaX:     .byte   $00     ; 01: プレイヤX
-v_nyaY:     .byte   $00     ; 02: プレイヤY
-v_nyaA:     .byte   $00     ; 03: プレイヤのスプライト属性
+v_nyaXF:    .byte   $00     ; 02: プレイヤX (小数点以下)
+v_nyaY:     .byte   $00     ; 03: プレイヤY
+v_nyaVXP:   .byte   $00     ; 04: X方向の加速度 (plus)
+v_nyaVXM:   .byte   $00     ; 05: X方向の加速度 (minus)
+v_nyaA:     .byte   $00     ; 06: プレイヤのスプライト属性
+v_nyaDash:  .byte   $00     ; 07: プレイヤのBダッシュ
 
 .org $0300
 sp_zero:    .byte   $00, $00, $00, $00  ; 00: ウィンドウ分割用
