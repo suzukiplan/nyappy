@@ -76,6 +76,7 @@ palettes:
 v_counter:  .byte   $00     ; 00: フレームカウンタ
 v_nyaX:     .byte   $00     ; 01: プレイヤX
 v_nyaY:     .byte   $00     ; 02: プレイヤY
+v_nyaA:     .byte   $00     ; 03: プレイヤのスプライト属性
 
 .org $0300
 sp_zero:    .byte   $00, $00, $00, $00  ; 00: ウィンドウ分割用
