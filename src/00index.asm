@@ -77,10 +77,11 @@ v_nyaX:     .byte   $00     ; 01: プレイヤX
 v_nyaY:     .byte   $00     ; 02: プレイヤY
 
 .org $0300
-sp_nyaLT:   .byte   $00, $00, $00, $00  ; 00: player(LT)
-sp_nyaRT:   .byte   $00, $00, $00, $00  ; 00: player(RT)
-sp_nyaLB:   .byte   $00, $00, $00, $00  ; 00: player(LB)
-sp_nyaRB:   .byte   $00, $00, $00, $00  ; 00: player(RB)
+sp_zero:    .byte   $00, $00, $00, $00  ; 00: ウィンドウ分割用
+sp_nyaLT:   .byte   $00, $00, $00, $00  ; 01: player(LT)
+sp_nyaRT:   .byte   $00, $00, $00, $00  ; 02: player(RT)
+sp_nyaLB:   .byte   $00, $00, $00, $00  ; 03: player(LB)
+sp_nyaRB:   .byte   $00, $00, $00, $00  ; 04: player(RB)
 
 .segment "VECINFO"
     .word   $0000
