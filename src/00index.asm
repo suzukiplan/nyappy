@@ -73,12 +73,14 @@ palettes:
 
 .org $0000
 v_counter:  .byte   $00     ; 00: フレームカウンタ
+v_nyaX:     .byte   $00     ; 01: プレイヤX
+v_nyaY:     .byte   $00     ; 02: プレイヤY
 
 .org $0300
-sp_nya_LT:  .byte   $00, $00, $00, $00  ; 00: player(LT)
-sp_nya_RT:  .byte   $00, $00, $00, $00  ; 00: player(RT)
-sp_nya_LB:  .byte   $00, $00, $00, $00  ; 00: player(LB)
-sp_nya_RB:  .byte   $00, $00, $00, $00  ; 00: player(RB)
+sp_nyaLT:   .byte   $00, $00, $00, $00  ; 00: player(LT)
+sp_nyaRT:   .byte   $00, $00, $00, $00  ; 00: player(RT)
+sp_nyaLB:   .byte   $00, $00, $00, $00  ; 00: player(LB)
+sp_nyaRB:   .byte   $00, $00, $00, $00  ; 00: player(RB)
 
 .segment "VECINFO"
     .word   $0000

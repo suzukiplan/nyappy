@@ -1,3 +1,9 @@
+    ; プレイヤ初期化
+    lda #32
+    sta v_nyaX
+    lda #200
+    sta v_nyaY
+
     ; screen on
     ; bit7: nmi interrupt
     ; bit6: PPU type (0=master, 1=slave)
