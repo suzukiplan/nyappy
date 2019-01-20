@@ -1,0 +1,61 @@
+;------------------------------------------
+; 各種定義
+;------------------------------------------
+.setcpu     "6502"
+.autoimport on
+
+; iNES header
+.segment "HEADER"
+    .byte   $4E, $45, $53, $1A  ; "NES" Header
+    .byte   $02                 ; PRG-BANKS
+    .byte   $01                 ; CHR-BANKS
+    .byte   $01                 ; Vertical Mirror
+    .byte   $00                 ; 
+    .byte   $00, $00, $00, $00  ; 
+    .byte   $00, $00, $00, $00  ; 
+
+.segment "STARTUP"
+.proc Reset
+    sei
+    ldx #$ff
+    txs
+
+    ; zero page
+    lda #$00
+    ldx #$00
+    ldy #$ff
+init_clear_ram0:
+    sta $0000, x
+    inx
+    dey
+    bne init_clear_ram0
+
+mainloop:
+    jmp mainloop
+
+.endproc
+
+palettes:
+    ; BG
+    .byte   $0f, $00, $10, $20 ; 白色のグラデーション (mask, dark, middle, light)
+    .byte   $0f, $18, $28, $38 ; 黄色のグラデーション (mask, dark, middle, light)
+    .byte   $0f, $11, $2c, $16 ; 海の背景用 (mask, 海, 水面, 土)
+    .byte   $0f, $00, $11, $20 ; タイトル画面
+    ; Sprite
+    .byte   $0f, $00, $10, $20 ; 白色のグラデーション (mask, dark, middle, light)
+    .byte   $0f, $16, $28, $20 ; 爆発 (mask, 赤, 黄, 白)
+    .byte   $0f, $18, $28, $38 ; 黄色のグラデーション (mask, dark, middle, light)
+    .byte   $0f, $11, $2c, $16 ; 海のスプライト用 (mask, 海, 水面, 土)
+
+.org $0000
+v_counter:  .byte   $00     ; 00: フレームカウンタ
+
+.segment "VECINFO"
+    .word   $0000
+    .word   Reset
+    .word   $0000
+
+; pattern table
+.segment "CHARS"
+    .incbin "sprite.chr"
+    .incbin "bg.chr"
