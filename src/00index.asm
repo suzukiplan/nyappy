@@ -20,6 +20,11 @@
     ldx #$ff
     txs
 
+    ; Screen off
+    lda #$00
+    sta $2000
+    sta $2001
+
     ; zero page
     lda #$00
     ldx #$00
@@ -30,8 +35,27 @@ init_clear_ram0:
     dey
     bne init_clear_ram0
 
-mainloop:
-    jmp mainloop
+    ; make palette table
+    lda #$3f
+    sta $2006
+    lda #$00
+    sta $2006
+    ldx #$00
+    ldy #$20
+copy_pal:
+    lda palettes, x
+    sta $2007
+    inx
+    dey
+    bne copy_pal
+
+    ; initialize APU
+    lda #%00001111
+    sta $4015
+
+.include "01title.asm"
+.include "02setup.asm"
+.include "03main.asm"
 
 .endproc
 
@@ -49,6 +73,12 @@ palettes:
 
 .org $0000
 v_counter:  .byte   $00     ; 00: フレームカウンタ
+
+.org $0300
+sp_nya_LT:  .byte   $00, $00, $00, $00  ; 00: player(LT)
+sp_nya_RT:  .byte   $00, $00, $00, $00  ; 00: player(RT)
+sp_nya_LB:  .byte   $00, $00, $00, $00  ; 00: player(LB)
+sp_nya_RB:  .byte   $00, $00, $00, $00  ; 00: player(RB)
 
 .segment "VECINFO"
     .word   $0000

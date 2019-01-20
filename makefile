@@ -1,5 +1,8 @@
 IMAGES = sprite.chr bg.chr
 SOURCES = \
+	src/03main.asm\
+	src/02setup.asm\
+	src/01title.asm\
 	src/00index.asm
 
 all: nyappy.nes
