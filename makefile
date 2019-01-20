@@ -1,5 +1,6 @@
 IMAGES = sprite.chr bg.chr
 SOURCES = \
+	src/movePlayer.asm\
 	src/03main.asm\
 	src/02setup.asm\
 	src/01title.asm\

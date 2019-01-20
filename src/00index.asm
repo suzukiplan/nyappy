@@ -56,6 +56,7 @@ copy_pal:
 .include "01title.asm"
 .include "02setup.asm"
 .include "03main.asm"
+.include "movePlayer.asm"
 
 .endproc
 
