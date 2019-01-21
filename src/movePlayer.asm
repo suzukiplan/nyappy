@@ -136,17 +136,20 @@ movePlayer_directionE:
     rts
 
 movePlayerLeft:
+    lda v_nyaDash
+    beq movePlayerLeft_notDash
+    jmp movePlayerLeftD
+movePlayerLeft_notDash:
     lda v_nyaVXP
     bne movePlayerLeft_break ; プラスの加速度が残っているので減速
     lda v_nyaVXM
     clc
     adc #$10
     bmi movePlayerLeft_over ; 加速度が上限（7F）を超えた
+    bcs movePlayerLeftD_over ; 加速度が上限（FF）を超えた
     sta v_nyaVXM
     rts
 movePlayerLeft_over:
-    lda #$7f
-    sta v_nyaVXM
     rts
 movePlayerLeft_break: ; プラスの加速度を減速
     sec
@@ -158,19 +161,45 @@ movePlayerLeft_break_end:
     lda #0
     sta v_nyaVXP
     rts
+movePlayerLeftD: ; ダッシュ中の場合
+    lda v_nyaVXP
+    bne movePlayerLeftD_break ; プラスの加速度が残っているので減速
+    lda v_nyaVXM
+    clc
+    adc #$10
+    bcs movePlayerLeftD_over ; 加速度が上限（FF）を超えた
+    sta v_nyaVXM
+    rts
+movePlayerLeftD_over:
+    lda #$ff
+    sta v_nyaVXM
+    rts
+movePlayerLeftD_break: ; プラスの加速度を減速
+    sec
+    sbc #$10
+    bcs movePlayerLeftD_break_end
+    sta v_nyaVXP
+    rts
+movePlayerLeftD_break_end:
+    lda #0
+    sta v_nyaVXP
+    rts
 
 movePlayerRight:
+    lda v_nyaDash
+    beq movePlayerRight_notDash
+    jmp movePlayerRightD
+movePlayerRight_notDash:
     lda v_nyaVXM
     bne movePlayerRight_break ; マイナスの加速度が残っているので減速
     lda v_nyaVXP
     clc
     adc #$10
     bmi movePlayerRight_over ; 加速度が上限（7F）を超えた
+    bcs movePlayerRightD_over ; 加速度が上限（FF）を超えた
     sta v_nyaVXP
     rts
 movePlayerRight_over:
-    lda #$7f
-    sta v_nyaVXP
     rts
 movePlayerRight_break: ; プラスの加速度を減速
     sec
@@ -179,6 +208,29 @@ movePlayerRight_break: ; プラスの加速度を減速
     sta v_nyaVXM
     rts
 movePlayerRight_break_end:
+    lda #0
+    sta v_nyaVXM
+    rts
+movePlayerRightD:
+    lda v_nyaVXM
+    bne movePlayerRightD_break ; マイナスの加速度が残っているので減速
+    lda v_nyaVXP
+    clc
+    adc #$10
+    bcs movePlayerRightD_over ; 加速度が上限（FF）を超えた
+    sta v_nyaVXP
+    rts
+movePlayerRightD_over:
+    lda #$ff
+    sta v_nyaVXP
+    rts
+movePlayerRightD_break: ; プラスの加速度を減速
+    sec
+    sbc #$10
+    bcs movePlayerRightD_break_end
+    sta v_nyaVXM
+    rts
+movePlayerRightD_break_end:
     lda #0
     sta v_nyaVXM
     rts
