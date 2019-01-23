@@ -24,6 +24,13 @@ movePlayer_endAnimate:
     lda #$00
     sta $4016
     lda $4016   ; A
+    and #$01
+    beq movePlayer_endPushA
+    lda v_nyaJmp
+    bne movePlayer_endPushA
+    lda #1
+    sta v_nyaJmp
+movePlayer_endPushA:
     lda $4016   ; B
     and #$01
     sta v_nyaDash ; Bダッシュ
@@ -140,6 +147,25 @@ movePlayer_calcXMinusEnd:
     lda #%01000000
     sta v_nyaA
 movePlayer_calcXEnd:
+
+    ; ジャンプ
+    ldx v_nyaJmp
+    beq movePlayer_endJump
+    lda v_nyaPtn
+    and #%00000011
+    ora #%00001100
+    sta v_nyaPtn
+    lda nya_jump_table, x
+    clc
+    adc v_nyaY
+    sta v_nyaY
+    inx
+    stx v_nyaJmp
+    cpx #38
+    bne movePlayer_endJump
+    ldx #0
+    stx v_nyaJmp
+movePlayer_endJump:
 
     ; プレイヤのY座標
     lda v_nyaY
