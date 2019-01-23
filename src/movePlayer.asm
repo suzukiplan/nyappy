@@ -1,4 +1,23 @@
 movePlayer:; プレイヤの移動
+    ; 4フレームに1回アニメーション
+    lda v_counter
+    and #%00000011
+    cmp #%00000011
+    bne movePlayer_endAnimate
+    lda v_nyaPtn
+    and #%00000011
+    cmp #%00000011
+    beq movePlayer_resetAnimate
+    clc
+    adc #1
+    sta v_nyaPtn
+    jmp movePlayer_endAnimate
+movePlayer_resetAnimate:
+    lda v_nyaPtn
+    and #%11111100
+    sta v_nyaPtn
+movePlayer_endAnimate:
+
     ; キー入力判定
     lda #$01
     sta $4016
@@ -56,9 +75,27 @@ movePlayer_calcX:; 加速度の値を見てプレイヤを動かす
     bne movePlayer_calcXPlus
     lda v_nyaVXM
     bne movePlayer_calcXMinus
+    ; 加速度0なので表示パターンを「おすわり」にする
+    lda v_nyaPtn
+    and #%00000011
+    sta v_nyaPtn
     jmp movePlayer_calcXEnd
 
 movePlayer_calcXPlus:
+    ; 加速度が$F0未満なら徒歩、90以上ならダッシュのパターンを設定
+    cmp #$F0
+    bcc movePlayer_calcXPlus_walk
+    lda v_nyaPtn
+    and #%00000011
+    ora #%00001000
+    sta v_nyaPtn
+    jmp movePlayer_calcXPlus_start
+movePlayer_calcXPlus_walk:
+    lda v_nyaPtn
+    and #%00000011
+    ora #%00000100
+    sta v_nyaPtn
+movePlayer_calcXPlus_start:
     lda v_nyaXF
     ldy #4
 movePlayer_calcXPlusLoop:
@@ -75,6 +112,20 @@ movePlayer_calcXPlusEnd:
     jmp movePlayer_calcXEnd
 
 movePlayer_calcXMinus:
+    ; 加速度が$F0未満なら徒歩、90以上ならダッシュのパターンを設定
+    cmp #$F0
+    bcc movePlayer_calcXMinus_walk
+    lda v_nyaPtn
+    and #%00000011
+    ora #%00001000
+    sta v_nyaPtn
+    jmp movePlayer_calcXMinus_start
+movePlayer_calcXMinus_walk:
+    lda v_nyaPtn
+    and #%00000011
+    ora #%00000100
+    sta v_nyaPtn
+movePlayer_calcXMinus_start:
     lda v_nyaXF
     ldy #4
 movePlayer_calcXMinusLoop:
@@ -125,13 +176,14 @@ movePlayer_directionE:
     stx sp_nyaRB + 2
 
     ; プレイヤのパターン
-    lda #$10
+    ldx v_nyaPtn
+    lda nya_patterns_lt, x
     sta sp_nyaLT + 1
-    lda #$11
+    lda nya_patterns_rt, x
     sta sp_nyaRT + 1
-    lda #$20
+    lda nya_patterns_lb, x
     sta sp_nyaLB + 1
-    lda #$21
+    lda nya_patterns_rb, x
     sta sp_nyaRB + 1
     rts
 

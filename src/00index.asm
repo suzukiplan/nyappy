@@ -72,6 +72,26 @@ palettes:
     .byte   $0f, $18, $28, $38 ; 黄色のグラデーション (mask, dark, middle, light)
     .byte   $0f, $11, $2c, $16 ; 海のスプライト用 (mask, 海, 水面, 土)
 
+nya_patterns_lt:
+    .byte   $10, $10, $10, $10 ; おすわり
+    .byte   $30, $32, $34, $36 ; 徒歩
+    .byte   $50, $52, $54, $56 ; ダッシュ
+
+nya_patterns_rt:
+    .byte   $11, $11, $11, $11 ; おすわり
+    .byte   $31, $33, $35, $37 ; 徒歩
+    .byte   $51, $53, $55, $57 ; ダッシュ
+
+nya_patterns_lb:
+    .byte   $20, $20, $20, $20 ; おすわり
+    .byte   $40, $42, $44, $46 ; 徒歩
+    .byte   $60, $62, $64, $66 ; ダッシュ
+
+nya_patterns_rb:
+    .byte   $21, $21, $21, $21 ; おすわり
+    .byte   $41, $43, $45, $47 ; 徒歩
+    .byte   $61, $63, $65, $67 ; ダッシュ
+
 .org $0000
 v_counter:  .byte   $00     ; 00: フレームカウンタ
 v_nyaX:     .byte   $00     ; 01: プレイヤX
@@ -81,6 +101,7 @@ v_nyaVXP:   .byte   $00     ; 04: X方向の加速度 (plus)
 v_nyaVXM:   .byte   $00     ; 05: X方向の加速度 (minus)
 v_nyaA:     .byte   $00     ; 06: プレイヤのスプライト属性
 v_nyaDash:  .byte   $00     ; 07: プレイヤのBダッシュ
+v_nyaPtn:   .byte   $00     ; 08: 表示パターン (上位5bitで種別, 下位3bitでアニメーション)
 
 .org $0300
 sp_zero:    .byte   $00, $00, $00, $00  ; 00: ウィンドウ分割用
