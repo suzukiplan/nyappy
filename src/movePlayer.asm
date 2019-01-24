@@ -39,15 +39,21 @@ movePlayer_endPushA:
     lda $4016   ; UP
     lda $4016   ; DOWN
 
+    lda #$00
+    sta v_nyaKey
     lda $4016   ; LEFT
     and #$01
     beq movePlayer_notLeft
+    lda #$ff
+    sta v_nyaKey
     jsr movePlayerLeft ; 左入力（マイナスの加速度up）
     jmp movePlayer_inputEnd
 movePlayer_notLeft:
     lda $4016   ; RIGHT
     and #$01
     beq movePlayer_inputNotLR
+    lda #$01
+    sta v_nyaKey
     jsr movePlayerRight ; 右入力（プラスの加速度up）
     jmp movePlayer_inputEnd
 movePlayer_inputNotLR: ; 左右の入力が無い（加速度がゼロで無ければ減速）
@@ -55,7 +61,7 @@ movePlayer_inputNotLR: ; 左右の入力が無い（加速度がゼロで無け�
     beq movePlayer_inputNotLR_vxp0
     ; プラスの加速度が残っているので減速
     sec
-    sbc #8
+    sbc #5
     bcc movePlayer_inputNotLR_vxpMinus
     sta v_nyaVXP
     jmp movePlayer_inputEnd
@@ -68,7 +74,7 @@ movePlayer_inputNotLR_vxp0:
     beq movePlayer_inputEnd
     ; マイナスの加速度が残っているので減速
     sec
-    sbc #8
+    sbc #5
     bcc movePlayer_inputNotLR_vxmMinus
     sta v_nyaVXM
     jmp movePlayer_inputEnd
@@ -89,7 +95,20 @@ movePlayer_calcX:; 加速度の値を見てプレイヤを動かす
     jmp movePlayer_calcXEnd
 
 movePlayer_calcXPlus:
+    ; ダッシュ中に逆方向のキー（左）を入れている場合はブレーキ状態
+    lda v_nyaDash
+    beq movePlayer_calcXPlus_notBreak
+    lda v_nyaKey
+    cmp #$ff
+    bne movePlayer_calcXPlus_notBreak
+    lda v_nyaPtn
+    and #%00000011
+    ora #%00010000
+    sta v_nyaPtn
+    jmp movePlayer_calcXPlus_start
+movePlayer_calcXPlus_notBreak:
     ; 加速度が$F0未満なら徒歩、90以上ならダッシュのパターンを設定
+    lda v_nyaVXP
     cmp #$F0
     bcc movePlayer_calcXPlus_walk
     lda v_nyaPtn
@@ -119,7 +138,20 @@ movePlayer_calcXPlusEnd:
     jmp movePlayer_calcXEnd
 
 movePlayer_calcXMinus:
+    ; ダッシュ中に逆方向のキー（右）を入れている場合はブレーキ状態
+    lda v_nyaDash
+    beq movePlayer_calcXMinus_notBreak
+    lda v_nyaKey
+    cmp #$01
+    bne movePlayer_calcXMinus_notBreak
+    lda v_nyaPtn
+    and #%00000011
+    ora #%00010000
+    sta v_nyaPtn
+    jmp movePlayer_calcXMinus_start
+movePlayer_calcXMinus_notBreak:
     ; 加速度が$F0未満なら徒歩、90以上ならダッシュのパターンを設定
+    lda v_nyaVXM
     cmp #$F0
     bcc movePlayer_calcXMinus_walk
     lda v_nyaPtn
@@ -222,7 +254,7 @@ movePlayerLeft_notDash:
     bne movePlayerLeft_break ; プラスの加速度が残っているので減速
     lda v_nyaVXM
     clc
-    adc #$10
+    adc #$08
     bmi movePlayerLeft_over ; 加速度が上限（7F）を超えた
     bcs movePlayerLeftD_over ; 加速度が上限（FF）を超えた
     sta v_nyaVXM
@@ -231,8 +263,8 @@ movePlayerLeft_over:
     rts
 movePlayerLeft_break: ; プラスの加速度を減速
     sec
-    sbc #$10
-    bcs movePlayerLeft_break_end
+    sbc #$0c
+    bcc movePlayerLeft_break_end
     sta v_nyaVXP
     rts
 movePlayerLeft_break_end:
@@ -244,7 +276,7 @@ movePlayerLeftD: ; ダッシュ中の場合
     bne movePlayerLeftD_break ; プラスの加速度が残っているので減速
     lda v_nyaVXM
     clc
-    adc #$10
+    adc #$08
     bcs movePlayerLeftD_over ; 加速度が上限（FF）を超えた
     sta v_nyaVXM
     rts
@@ -254,8 +286,8 @@ movePlayerLeftD_over:
     rts
 movePlayerLeftD_break: ; プラスの加速度を減速
     sec
-    sbc #$10
-    bcs movePlayerLeftD_break_end
+    sbc #$0c
+    bcc movePlayerLeftD_break_end
     sta v_nyaVXP
     rts
 movePlayerLeftD_break_end:
@@ -272,17 +304,17 @@ movePlayerRight_notDash:
     bne movePlayerRight_break ; マイナスの加速度が残っているので減速
     lda v_nyaVXP
     clc
-    adc #$10
+    adc #$08
     bmi movePlayerRight_over ; 加速度が上限（7F）を超えた
     bcs movePlayerRightD_over ; 加速度が上限（FF）を超えた
     sta v_nyaVXP
     rts
 movePlayerRight_over:
     rts
-movePlayerRight_break: ; プラスの加速度を減速
+movePlayerRight_break: ; マイナスの加速度を減速
     sec
-    sbc #$10
-    bcs movePlayerRight_break_end
+    sbc #$0c
+    bcc movePlayerRight_break_end
     sta v_nyaVXM
     rts
 movePlayerRight_break_end:
@@ -294,7 +326,7 @@ movePlayerRightD:
     bne movePlayerRightD_break ; マイナスの加速度が残っているので減速
     lda v_nyaVXP
     clc
-    adc #$10
+    adc #$08
     bcs movePlayerRightD_over ; 加速度が上限（FF）を超えた
     sta v_nyaVXP
     rts
@@ -302,10 +334,10 @@ movePlayerRightD_over:
     lda #$ff
     sta v_nyaVXP
     rts
-movePlayerRightD_break: ; プラスの加速度を減速
+movePlayerRightD_break: ; マイナスの加速度を減速
     sec
-    sbc #$10
-    bcs movePlayerRightD_break_end
+    sbc #$0c
+    bcc movePlayerRightD_break_end
     sta v_nyaVXM
     rts
 movePlayerRightD_break_end:
