@@ -1,8 +1,28 @@
     ; プレイヤ初期化
     lda #32
     sta v_nyaX
-    lda #200
+    lda #192
     sta v_nyaY
+
+    ; マップタイルを描画
+    lda #$22
+    sta $2006
+    lda #$c0
+    sta $2006
+    ldx #0
+setup_map_tile_loop:
+    lda map_tile_pattern_A, x
+    sta $2007
+    inx
+    bne setup_map_tile_loop
+
+setup_wait_vBlank:
+    lda $2002
+    bpl setup_wait_vBlank ; wait for vBlank
+    lda #$00
+    sta $2005
+    lda #$00
+    sta $2005
 
     ; screen on
     ; bit7: nmi interrupt
