@@ -10,11 +10,66 @@
     lda #$c0
     sta $2006
     ldx #0
-setup_map_tile_loop:
+setup_map_tile_loop_22c0:
     lda map_tile_pattern_A, x
     sta $2007
     inx
-    bne setup_map_tile_loop
+    bne setup_map_tile_loop_22c0
+
+    lda #$22
+    sta $2006
+    lda #$40
+    sta $2006
+    ldx #0
+setup_map_tile_loop_2240:
+    lda map_tile_pattern_A, x
+    sta $2007
+    inx
+    bne setup_map_tile_loop_2240
+
+    lda #$21
+    sta $2006
+    lda #$c0
+    sta $2006
+    ldx #0
+setup_map_tile_loop_21c0:
+    lda map_tile_pattern_A, x
+    sta $2007
+    inx
+    bne setup_map_tile_loop_21c0
+
+    lda #$21
+    sta $2006
+    lda #$40
+    sta $2006
+    ldx #0
+setup_map_tile_loop_2140:
+    lda map_tile_pattern_A, x
+    sta $2007
+    inx
+    bne setup_map_tile_loop_2140
+
+    lda #$20
+    sta $2006
+    lda #$c0
+    sta $2006
+    ldx #0
+setup_map_tile_loop_20c0:
+    lda map_tile_pattern_A, x
+    sta $2007
+    inx
+    bne setup_map_tile_loop_20c0
+
+    lda #$20
+    sta $2006
+    lda #$40
+    sta $2006
+    ldx #0
+setup_map_tile_loop_2040:
+    lda map_tile_pattern_A, x
+    sta $2007
+    inx
+    bne setup_map_tile_loop_2040
 
 setup_wait_vBlank:
     lda $2002
